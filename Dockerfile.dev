@@ -1,0 +1,19 @@
+# Development container that runs `npm start` (hot-reload)
+FROM node:18-alpine
+WORKDIR /app
+
+# include local node_modules/.bin in PATH
+ENV PATH=/app/node_modules/.bin:$PATH
+# Make react-scripts listen on all interfaces and enable polling (works better on Windows host mounts)
+ENV HOST=0.0.0.0
+ENV CHOKIDAR_USEPOLLING=true
+
+# Install deps
+COPY package*.json ./
+RUN npm ci
+
+# Mount source at runtime via docker-compose or copy for image
+COPY . .
+
+EXPOSE 3000
+CMD ["npm", "start"]
